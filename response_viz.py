@@ -16,12 +16,13 @@ def resamp_interp(x, y, new_x):
 data = pd.read_csv("response.csv")
 zig_zag = np.load("zigzag.npy")
 
-gs = gridspec.GridSpec(1, 2, wspace=0.25, hspace=0.4, width_ratios=[0.75, 0.25])
+# gs = gridspec.GridSpec(1, 2, wspace=0.25, hspace=0.4, width_ratios=[0.75, 0.25])
+
 figure = plt.figure(figsize=(12, 10))
 
-main = figure.add_subplot(gs[0, 0])
+main = figure.add_subplot()
 
-main.plot(zig_zag[:,0], zig_zag[:, 1], lw=2, c="black")
+main.scatter(zig_zag[:,0], zig_zag[:, 1], c="black")
 
 traj = np.flip(data.cur_pos.to_numpy())
 pos = data.zig_pos - data.zig_pos.to_numpy()[-1]
@@ -29,27 +30,27 @@ pos = data.zig_pos - data.zig_pos.to_numpy()[-1]
 main.plot(traj, pos, lw=0.5, c="red")
 main.set_xlim([-10.5, 10.5])
 
-side = figure.add_subplot(gs[0, 1])
+# side = figure.add_subplot(gs[0, 1])
 
-beg = zig_zag[:,1].max()
-end = zig_zag[:,1].min()
+# beg = zig_zag[:,1].max()
+# end = zig_zag[:,1].min()
 
-beg_ix = np.where(pos <= beg)[0][0]
-end_ix = np.where(pos <= end)[0][0]
+# beg_ix = np.where(pos <= beg)[0][0]
+# end_ix = np.where(pos <= end)[0][0]
 
-old_y = zig_zag[:,0]
-old_x = zig_zag[:,1]
-new_x = np.flip(pos.iloc[beg_ix:end_ix].to_numpy())
-new_y = resamp_interp(old_x, old_y, new_x)
+# old_y = zig_zag[:,0]
+# old_x = zig_zag[:,1]
+# new_x = np.flip(pos.iloc[beg_ix:end_ix].to_numpy())
+# new_y = resamp_interp(old_x, old_y, new_x)
 
-perfect_agent = np.zeros(pos.size)
-perfect_agent[beg_ix:end_ix] = np.flip(new_y)
+# perfect_agent = np.zeros(pos.size)
+# perfect_agent[beg_ix:end_ix] = np.flip(new_y)
 
-result = traj - perfect_agent
+# result = traj - perfect_agent
 
-side.axvline(0, lw=0.2, c="black")
-side.plot(result, pos, lw=0.5, c="blue")
-side.set_xlim([-2, 2])
+# side.axvline(0, lw=0.2, c="black")
+# side.plot(result, pos, lw=0.5, c="blue")
+# side.set_xlim([-5, 5])
 
 
 plt.show(block=False)

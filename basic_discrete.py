@@ -77,7 +77,7 @@ text_stim = visual.TextBox(
     pos=(-15, 10)
 )
 
-y=np.arange(12, 50, 2)
+y=np.arange(12, 70, 6)
 x=np.tile([-6,6], int(y.shape[0]/2))
 vertices=np.array(list(zip(x,y)))
 
@@ -90,6 +90,18 @@ zig_zag_zig = visual.ShapeStim(
     interpolate=True,
     lineWidth=10
 )
+
+dots = []
+for i in vertices:
+    dots.append(visual.Circle(
+        win,
+        radius=0.4,
+        edges=40,
+        units="deg",
+        fillColor="white",
+        lineColor="white",
+        pos=tuple(i)
+    ))
 
 data = {
     "x": [],
@@ -113,17 +125,24 @@ while not event.getKeys(keyList=['q'], timeStamped=False):
         pos = 10
     
     
-    zig_zag_zig.pos -= (0, 0.7*va.pixDeg())
+    # zig_zag_zig.pos -= (0, .7*va.pixDeg())
+
+    for i in dots:
+        i.pos -= (0, .9*va.pixDeg())
+        i.draw()
+
     cursor.setPos((pos, 0))
-    if cursor.overlaps(zig_zag_zig):
-        number += 1
-        overlap = True
-    else:
-        overlap = False
+
+    for i in dots:
+        if cursor.overlaps(i):
+            number += 1
+            overlap = True
+        else:
+            overlap = False
     text_stim.setText(str(number))
     line_left.draw()
     line_right.draw()
-    zig_zag_zig.draw()
+    # zig_zag_zig.draw()
     text_stim.draw()
     cursor.draw()
     time = win.flip()
@@ -134,10 +153,10 @@ while not event.getKeys(keyList=['q'], timeStamped=False):
     data["cur_pos"].append(cursor.pos[0])
     data["overlap"].append(overlap)
     data["time"].append(time)
-else:
-    out = pd.DataFrame.from_dict(data)
-    out.to_csv("response.csv", index=False)
-    np.save("zigzag.npy", zig_zag_zig.vertices)
+
+out = pd.DataFrame.from_dict(data)
+out.to_csv("response.csv", index=False)
+np.save("zigzag.npy", zig_zag_zig.vertices)
 
 core.quit()
 win.close()
